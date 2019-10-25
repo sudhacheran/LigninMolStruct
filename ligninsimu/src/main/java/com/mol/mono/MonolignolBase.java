@@ -7,11 +7,13 @@ import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomType;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMolecularFormula;
 import org.openscience.cdk.io.XYZWriter;
@@ -20,6 +22,8 @@ import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator;
 
 public class MonolignolBase {
@@ -43,7 +47,7 @@ public class MonolignolBase {
 		super();		
 	}
 
-	public static MonolignolBase getMonolignolUnit(String type, int cnt)
+	public static MonolignolBase getMonolignolUnit(String type, int cnt) 
 	{
 		if (type.equals("G"))
 				return new GUnit(cnt);
@@ -53,40 +57,40 @@ public class MonolignolBase {
 			return new SUnit(cnt);
 	}
 	
-	public IAtomContainer generateBaseMol(int i)
+	public IAtomContainer generateBaseMol(int i) 
 	{
 		
-		 c1 = new Atom(6);		 
-		 c1.setAtomTypeName("c1_"+i);
+		 c1 = new Atom("C");		 
+		 c1.setID("c1_"+i);
 		 
-		 c2 = new Atom(6);
-		 c2.setAtomTypeName("c2_"+i);
+		 c2 = new Atom("C");
+		 c2.setID("c2_"+i);
 
-		 c3 = new Atom(6);
-		 c3.setAtomTypeName("c3_"+i);
+		 c3 = new Atom("C");
+		 c3.setID("c3_"+i);
 
-		 c4 = new Atom(6);
-		 c4.setAtomTypeName("c4_"+i);
+		 c4 = new Atom("C");
+		 c4.setID("c4_"+i);
 
-		 c5 = new Atom(6);
-		 c5.setAtomTypeName("c5_"+i);
+		 c5 = new Atom("C");
+		 c5.setID("c5_"+i);
 
-		 c6 = new Atom(6);
-		 c6.setAtomTypeName("c6_"+i);
+		 c6 = new Atom("C");
+		 c6.setID("c6_"+i);
 
-		 alphaC = new Atom(6);
-		 alphaC.setAtomTypeName("aC_"+i);
+		 alphaC = new Atom("C");
+		 alphaC.setID("aC_"+i);
 
-		 betaC = new Atom(6);
-		 betaC.setAtomTypeName("bC_"+i);
+		 betaC = new Atom("C");
+		 betaC.setID("bC_"+i);
 		 
-		 gammaC = new Atom(6);
-		 gammaC.setAtomTypeName("gC_"+i);
+		 gammaC = new Atom("C");
+		 gammaC.setID("gC_"+i);
 
-		 o1 = new Atom(8);
-		 o1.setAtomTypeName("O1_"+i);
-		 o2 = new Atom(8);
-		 o2.setAtomTypeName("O2_"+i);
+		 o1 = new Atom("O");
+		 o1.setID("O1_"+i);
+		 o2 = new Atom("O");
+		 o2.setID("O2_"+i);
 		 		 
 		 b1= new Bond(c1,c2,IBond.Order.DOUBLE);
 		 b2= new Bond(c2,c3);
@@ -132,6 +136,7 @@ public class MonolignolBase {
 		 mol.addBond(b10);
 		 mol.addBond(b11);
 		 
+		 
 		return mol;
 	}
 	
@@ -170,6 +175,24 @@ public class MonolignolBase {
 		return Math.round(molWeight);
 	}
 	
+	public IAtomContainer configureMol(IAtomContainer molecule)
+	{		
+		try {
+		CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(molecule.getBuilder());
+		for (IAtom atom : molecule.atoms()) {
+			IAtomType type = matcher.findMatchingAtomType(molecule, atom);
+			AtomTypeManipulator.configure(atom, type);
+		}
+		CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(molecule.getBuilder());
+		adder.addImplicitHydrogens(molecule);
+		} catch (CDKException e)
+		{
+			e.printStackTrace();
+		}
+		return molecule;
+	}
+	
+	
 	public void toIMage(int i, IAtomContainer mol)
 	 {
 		 try {	
@@ -177,7 +200,6 @@ public class MonolignolBase {
 			sdg.generateCoordinates(mol);	
 			
 			IAtomContainer OutMol = sdg.getMolecule();
-			
 			new DepictionGenerator().withAtomColors().withCarbonSymbols().withAtomNumbers().depict(OutMol)
 			          .writeTo("struct/g"+i+".png");
 		

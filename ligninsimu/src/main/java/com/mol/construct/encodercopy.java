@@ -13,7 +13,7 @@ public class encodercopy {
 	
 	 //Inputs 
 	static String[] bonds = { "B04", "55", "B5","A04","BB" }; // Bonds possible
-	static int[] bondper = { 100, 0, 0, 0, 0};  // Ratio of the bonds
+	static int[] bondper = { 50, 0, 50, 0, 0};  // Ratio of the bonds
 
 	static String[] mono = { "G", "H", "S" }; // Monomer units
 	static int[] monoPer = {30, 30, 40 }; // Ratio of the units
