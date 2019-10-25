@@ -12,8 +12,10 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
-import com.mol.mono.*;
-import com.mol.construct.*;
+import com.mol.construct.Lignin;
+import com.mol.construct.childNode;
+import com.mol.construct.encodercopy;
+import com.mol.mono.MonolignolBase;
 
 
 public class GenerateStructure {
@@ -21,7 +23,7 @@ public class GenerateStructure {
 	
 	public static void main(String s[]) throws IOException
 	{
-		runData(2);
+		runData(4);
 	}
 	
 	public static void runData(int dp) throws IOException
@@ -31,12 +33,13 @@ public class GenerateStructure {
 		//System.out.println(ligninList.size());
 		int i=0;
 		
+		/* loop for every lignin string generated from the permutation and combination */
 		for (Lignin lignin:ligninList)
 		{
 			int parentNode = Integer.parseInt(""+lignin.getPType().charAt(0));
 			String parentNodeType = ""+lignin.getPType().charAt(1);
 			//System.out.println(parentNode +"-"+parentNodeType);
-			MonolignolBase g = MonolignolBase.getMonolignolUnit(parentNodeType, parentNode);
+			MonolignolBase g = MonolignolBase.getMonolignolUnit(parentNodeType, parentNode);  // Generate the first monomer unit 
 			
 				//G_Conferyl g = new G_Conferyl(1);
 				List<Integer> cc = new ArrayList<Integer>(); 
@@ -102,11 +105,18 @@ public class GenerateStructure {
 						}	
 					}
 				}
-				g.toIMage(i++, g.getMol());
+				/* Start -  Code to add implicit hydrogen atoms */
+				IAtomContainer gMol = g.getMol();
+				gMol = g.configureMol(gMol);				
+				/* End -  Code to add implicit hydrogen atoms */
 				
+				/* Start - to generate 2D structure */
+				g.toIMage(i++, gMol);
+				/* End - to generate 2D structure */
 				System.out.println("Lignin="+i+",MolWt="+g.getMolWt(g.getMol())+"Struct="+lignin+"SMILEString="+g.getSmile(g.getMol()));
 				
 		}
+		
 		Date dt2 = new Date();		
 		System.out.println("Time taken="+ getDifference(dt,dt2));
 		
@@ -120,9 +130,10 @@ public class GenerateStructure {
 		
 		for (int i=0;i<g1_mol.getAtomCount();i++)
 		{
-			if (g1_mol.getAtom(i).getAtomTypeName()!=null  && g1_mol.getAtom(i).getAtomTypeName().equals(b1))
+			if (g1_mol.getAtom(i).getID()!=null  && g1_mol.getAtom(i).getID().equals(b1))
 			{
-				atm1 = 	g1_mol.getAtom(i);				
+				atm1 = 	g1_mol.getAtom(i);		
+				
 				if (i>1)
 				{
 					atm3 = g1_mol.getAtom(i-1);					
@@ -133,11 +144,11 @@ public class GenerateStructure {
 					}
 				}
 			}
-		}
+		}		
 		
 		for (int i=0;i<g2_mol.getAtomCount();i++)
 		{
-			if (g2_mol.getAtom(i).getAtomTypeName()!= null && g2_mol.getAtom(i).getAtomTypeName().equals(b2))
+			if (g2_mol.getAtom(i).getID()!= null && g2_mol.getAtom(i).getID().equals(b2))
 				atm2 = 	g2_mol.getAtom(i);
 			g1_mol.addAtom(g2_mol.getAtom(i));			
 		}
@@ -148,20 +159,21 @@ public class GenerateStructure {
 		} 
 		IBond bnd = new Bond(atm1,atm2);
 		g1_mol.addBond(bnd);
+		//g1_mol =  g.configureMol(g.getMol());
 		return g;
 	}
 	
-	static MonolignolBase generateStruct(MonolignolBase g, String b1, String b2)
+	static MonolignolBase generateStruct(MonolignolBase g, String b1, String b2) 
 	{
 		IAtomContainer g1_mol = g.getMol();		
 		IAtom atm1 = null, atm2 = null, atm3=null;
 		
 		for (int i=0;i<g1_mol.getAtomCount();i++)
 		{
-			if (g1_mol.getAtom(i).getAtomTypeName()!=null  && g1_mol.getAtom(i).getAtomTypeName().equals(b1))
+			if (g1_mol.getAtom(i).getID()!=null  && g1_mol.getAtom(i).getID().equals(b1))
 			{
 				atm1 = 	g1_mol.getAtom(i);	
-				//System.out.println(b1+"-"+atm1.getAtomTypeName());
+				//System.out.println(b1+"-"+atm1.getID());
 				if (i>1)
 				{
 					atm3 = g1_mol.getAtom(i-1);					
@@ -176,16 +188,16 @@ public class GenerateStructure {
 		
 		for (int i=0;i<g1_mol.getAtomCount();i++)
 		{
-			if (g1_mol.getAtom(i).getAtomTypeName()!= null && g1_mol.getAtom(i).getAtomTypeName().equals(b2))
+			if (g1_mol.getAtom(i).getID()!= null && g1_mol.getAtom(i).getID().equals(b2))
 			{
 				atm2 = 	g1_mol.getAtom(i);
-				//System.out.println(b2+"-"+atm2.getAtomTypeName());				
+				//System.out.println(b2+"-"+atm2.getID());				
 			}
 						
 		}	
 		IBond bnd = new Bond(atm1,atm2);
-		g.getMol().addBond(bnd);
-		
+		g.getMol().addBond(bnd);	
+		//g1_mol = g.configureMol(g.getMol());
 		return g;
 	}
 	

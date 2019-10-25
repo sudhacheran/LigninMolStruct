@@ -4,7 +4,7 @@ package com.mol.mono;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -20,9 +20,10 @@ public class HUnit extends MonolignolBase {
 		hunit.toIMage(102, hunit.mol);		
 	}
 
-	public HUnit(int i) {
+	public HUnit(int i)  {
 		super();
-		mol = generateBaseMol(i);		
+		mol = generateBaseMol(i);	
+		//mol = configureMol(mol);
 		setBondingAtom(bondingAtom);
 		
 	}
