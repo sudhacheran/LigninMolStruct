@@ -1,2 +1,2 @@
-# LigninMolecularSimulation
-Lignin molecular simulation and data
+# Lignin Molecular Simulation
+Lignin molecular simulation code and data
