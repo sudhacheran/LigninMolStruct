@@ -7,20 +7,21 @@ import java.util.List;
 
 
 public class GeneratePolymer {
-	
+		static final int noOfPer_limit = 10000;
 	
 
 public static void main(String[] args) {
 		
-		int dp = 6;
+		int dp = 30;
 		
-		int noOfPer = 1000;
+		long noOfPer = factorial(dp);
+		System.out.println("No of permutation="+noOfPer);
 
 		String[] str = { "B04", "BB", "55", "B5", "B1", "405" };
-		int[] bondper = { 60, 10, 10, 10, 5, 5 };
+		int[] bondper = { 100, 0, 0, 0, 0, 0 };
 
 		String[] mono = { "G", "H", "S" };
-		int[] monoPer = { 100, 0, 0 };
+		int[] monoPer = { 30, 30, 40 };
 		
 		GeneratePolymer gp = new GeneratePolymer();
 		List<String> polymentString = gp.getPossiblePolymer(str, bondper, mono, monoPer, dp,noOfPer);
@@ -41,14 +42,14 @@ public static void main(String[] args) {
  * @param noOfPer - Limiting the permutation
  * @return
  */
-public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mono, int[] monoPer, int dp, int noOfPer)
+public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mono, int[] monoPer, int dp, long noOfPer)
 {
 
 		String[] strBonds = getList(str, bondper, dp);
 		String[] monoBonds = getList(mono, monoPer, dp);
 
-		//System.out.println("No of Bonds=" + strBonds.length);
-		//System.out.println("No of Monomers=" + monoBonds.length);
+		System.out.println("No of Bonds=" + strBonds.length);
+		System.out.println("No of Monomers=" + monoBonds.length);
 
 		List<String[]> bondList = new ArrayList<String[]>();
 
@@ -61,7 +62,6 @@ public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mon
 
 		System.out.println("Bond Permutations" + bondList.size());
 		System.out.println("Monomer Permutations" + monoList.size());
-
 		List<String> polymer = new ArrayList<String>();
 
 		//int d=0;
@@ -73,7 +73,7 @@ public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mon
 				for (String tt : s2) {
 					polymerStr += s4[e++] + "-" + tt + "-";
 				}		
-				if (!polymer.contains(polymerStr))
+				if (!polymer.contains(polymerStr))					
 				polymer.add(polymerStr);
 			}
 		}
@@ -143,8 +143,9 @@ public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mon
 	 * @param bondList  - List to store the possible combinations of Bond / Monomers
 	 * @param noOfPermutation
 	 */
-	public void permute(String[] str, int l, int r, List<String[]> bondList, int noOfPermutation) {
+	public void permute(String[] str, int l, int r, List<String[]> bondList, long noOfPermutation) {
 		if (bondList.size() >= noOfPermutation) {
+			System.out.print("Enteret empty return");
 			return;
 		}
 
@@ -191,8 +192,20 @@ public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mon
 		a[j] = temp;
 		return a;
 	}
+	
+	public static long factorial(int n)
+	{
+		if (n > 25) return noOfPer_limit;
+		long fact=1;
+		for (int i=1;i<=n;i++)
+		{
+			fact=fact*i;
+		}
+		if (fact > noOfPer_limit) return noOfPer_limit;
+		return fact;
+	}
 
-	public void sop(String s) {
+	public static void sop(String s) {
 		System.out.println(s);
 	}
 }

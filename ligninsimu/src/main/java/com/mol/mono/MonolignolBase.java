@@ -151,15 +151,7 @@ public class MonolignolBase {
 		return smi;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public String getMolecularFormula(IAtomContainer mol)
-	{
-		IMolecularFormula moleFormula = MolecularFormulaManipulator.getMolecularFormula(mol);
-		System.out.println(MolecularFormulaManipulator.getHillString(moleFormula));
-		return MolecularFormulaManipulator.getHillString(moleFormula);
-		
-	}
-	
+
 	public double getMolWt(IAtomContainer mol) throws IOException
 	{
 		Isotopes isotopeInfo = Isotopes.getInstance();

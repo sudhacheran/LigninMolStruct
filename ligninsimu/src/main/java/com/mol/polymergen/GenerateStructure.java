@@ -3,9 +3,11 @@ package com.mol.polymergen;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.interfaces.IAtom;
@@ -21,39 +23,46 @@ public class GenerateStructure {
 	
 	public static void main(String s[]) throws IOException
 	{
-		runData(2);
+		Scanner in = new Scanner(System.in); 
+		System.out.println("Enter the DP (no. of monomer units) : ");  
+        String dp = in.nextLine(); 
+        System.out.println("You entered dp = "+dp);
+        System.out.println("G/H/S ratio : "+ encodercopy.getMonoPer());
+        runData(Integer.parseInt(dp));
 	}
 	
 	public static void runData(int dp) throws IOException
 	{
 		Date dt = new Date();
 		List<Lignin> ligninList = encodercopy.generateEncodedFile(dp);
-		//System.out.println(ligninList.size());
+		System.out.println(ligninList.size());
 		int i=0;
+		PrintWriter writer;		
+		writer = new PrintWriter("LigninSmiles.txt", "UTF-8");
 		
 		for (Lignin lignin:ligninList)
 		{
-			int parentNode = Integer.parseInt(""+lignin.getPType().charAt(0));
-			String parentNodeType = ""+lignin.getPType().charAt(1);
+			int parentNode = Integer.parseInt(""+lignin.getPType().substring(0,lignin.getPType().length()-1));
+			String parentNodeType = ""+lignin.getPType().charAt(lignin.getPType().length()-1);
 			//System.out.println(parentNode +"-"+parentNodeType);
 			MonolignolBase g = MonolignolBase.getMonolignolUnit(parentNodeType, parentNode);
-			
+						
 				//G_Conferyl g = new G_Conferyl(1);
 				List<Integer> cc = new ArrayList<Integer>(); 
 				List<childNode> cNList = lignin.getcNode();	
 				for (childNode cN: cNList)
 				{
 					 //Child object initialization
-					int gp = Integer.parseInt(""+cN.getpType().charAt(0));
-					String gptype = ""+cN.getpType().charAt(1);
-					int gc = Integer.parseInt(""+cN.getcType().charAt(0));
-					String gctype = ""+cN.getpType().charAt(1);
+					int gp = Integer.parseInt(""+cN.getpType().substring(0, cN.getpType().length()-1));
+					String gptype = ""+cN.getpType().charAt(cN.getpType().length()-1);
+					int gc = Integer.parseInt(""+cN.getcType().substring(0, cN.getcType().length()-1));
+					String gctype = ""+cN.getcType().charAt(cN.getcType().length()-1);
 					
 					if (cN.getpType().equals(lignin.getPType()))
 					{
 						cc.add(gc);
 						//System.out.println("Entered 1");
-						//System.out.println(gctype +"-"+gctype);
+						//System.out.println(gc +"-"+gctype);
 						MonolignolBase g2 = MonolignolBase.getMonolignolUnit(gctype, gc);							
 						if (cN.getBondType().equals("B04"))
 							g = generateStruct (g,g2,"bC_1","O2_"+gc);
@@ -86,7 +95,7 @@ public class GenerateStructure {
 						else if (!cc.contains(gc))
 						{
 							cc.add(gc);
-							//System.out.println(gctype +"-"+gctype);
+							//System.out.println(gc +"-"+gctype);
 							MonolignolBase g2 = MonolignolBase.getMonolignolUnit(gctype, gc);
 							//System.out.println("Entered 3");
 							if (cN.getBondType().equals("B04"))
@@ -102,13 +111,15 @@ public class GenerateStructure {
 						}	
 					}
 				}
-				g.toIMage(i++, g.getMol());
-				
+				i++;
+				//g.toIMage(i, g.getMol());
+				writer.println("Lignin="+i+",SMILEString="+g.getSmile(g.getMol()));
 				System.out.println("Lignin="+i+",MolWt="+g.getMolWt(g.getMol())+"Struct="+lignin+"SMILEString="+g.getSmile(g.getMol()));
 				
 		}
 		Date dt2 = new Date();		
 		System.out.println("Time taken="+ getDifference(dt,dt2));
+		writer.close();
 		
 	}
 	
@@ -180,12 +191,10 @@ public class GenerateStructure {
 			{
 				atm2 = 	g1_mol.getAtom(i);
 				//System.out.println(b2+"-"+atm2.getAtomTypeName());				
-			}
-						
+			}						
 		}	
 		IBond bnd = new Bond(atm1,atm2);
-		g.getMol().addBond(bnd);
-		
+		g.getMol().addBond(bnd);		
 		return g;
 	}
 	

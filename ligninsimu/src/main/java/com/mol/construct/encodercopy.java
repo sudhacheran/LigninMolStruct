@@ -16,9 +16,51 @@ public class encodercopy {
 	static int[] bondper = { 100, 0, 0, 0, 0};  // Ratio of the bonds
 
 	static String[] mono = { "G", "H", "S" }; // Monomer units
-	static int[] monoPer = {30, 30, 40 }; // Ratio of the units
+	static int[] monoPer = {94, 5, 1 }; // Ratio of the units
 	
-	static int dp =10; // No of monomer units
+	static int dp =20; // No of monomer units
+	
+	public static String[] getBonds() {
+		return bonds;
+	}
+
+	public static void setBonds(String[] bonds) {
+		encodercopy.bonds = bonds;
+	}
+
+	public static int[] getBondper() {
+		return bondper;
+	}
+
+	public static void setBondper(int[] bondper) {
+		encodercopy.bondper = bondper;
+	}
+
+	public static String[] getMono() {
+		return mono;
+	}
+
+	public static void setMono(String[] mono) {
+		encodercopy.mono = mono;
+	}
+
+	public static String getMonoPer() {
+		String monoStr = monoPer[0]+" / "+monoPer[1]+" / "+monoPer[2];		
+		return monoStr;
+	}
+
+	public static void setMonoPer(int[] monoPer) {
+		encodercopy.monoPer = monoPer;
+	}
+
+	public static int getDp() {
+		return dp;
+	}
+
+	public static void setDp(int dp) {
+		encodercopy.dp = dp;
+	}
+
 	public static void main(String s[])
 	{
 		 try {
@@ -47,12 +89,12 @@ public class encodercopy {
 		GeneratePolymer gp = new GeneratePolymer();
 		List<String[]> monoListStr = new ArrayList<String[]>();
 		int n = monoArr.length;
-		int noOfPer = 5000;
+		long noOfPer = GeneratePolymer.factorial(dp);
 		gp.permute(monoArr, 0, n - 1, monoListStr, noOfPer);  // generating the permutation of monomers with the maximum permutation as 5000
 		
 		monoListStr=removeDuplicates(monoListStr);  // removing the repeated permutations in the list
 
-		//sop(monoListStr.size());
+		sop(monoListStr.size());
 		
 		/*for(int i=0;i<monoListStr.size();i++)
 		{
@@ -60,7 +102,7 @@ public class encodercopy {
 		}*/
 		
 		ArrayList<Integer> getSeq = Combination.printCombination(dp);  // possible combinations 
-		sop(getSeq);
+		//sop(getSeq);
 		int nP = (getSeq.size()<=2)?getSeq.size():getSeq.size()/2;	
 		String[] bondArr = getList(bonds, bondper, dp);
 				
@@ -169,7 +211,7 @@ public class encodercopy {
 				{
 					if (monomer.getEdgeType()!=null && monomer.getEdgeType()[b] != null)
 					{
-						bondtype = bondtype.concat(" "+monomer.getEdgeType()[b]).concat(" ");
+						bondtype = bondtype.concat(monomer.getEdgeType()[b]);
 					}
 				}
 				
