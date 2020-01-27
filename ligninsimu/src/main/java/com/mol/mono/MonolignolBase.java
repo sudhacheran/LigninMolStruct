@@ -170,7 +170,7 @@ public class MonolignolBase {
 			
 			IAtomContainer OutMol = sdg.getMolecule();
 			
-			new DepictionGenerator().withAtomColors().withCarbonSymbols().withAtomNumbers().depict(OutMol)
+			new DepictionGenerator().withAtomColors().depict(OutMol)
 			          .writeTo("struct/g"+i+".png");
 		
 			

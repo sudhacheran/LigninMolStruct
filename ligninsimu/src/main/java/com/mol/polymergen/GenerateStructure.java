@@ -112,7 +112,7 @@ public class GenerateStructure {
 					}
 				}
 				i++;
-				//g.toIMage(i, g.getMol());
+				g.toIMage(i, g.getMol());
 				writer.println("Lignin="+i+",SMILEString="+g.getSmile(g.getMol()));
 				System.out.println("Lignin="+i+",MolWt="+g.getMolWt(g.getMol())+"Struct="+lignin+"SMILEString="+g.getSmile(g.getMol()));
 				
