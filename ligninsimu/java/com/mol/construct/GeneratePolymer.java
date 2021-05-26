@@ -12,16 +12,16 @@ public class GeneratePolymer {
 
 public static void main(String[] args) {
 		
-		int dp = 30;
+		int dp = 6;
 		
 		long noOfPer = factorial(dp);
 		System.out.println("No of permutation="+noOfPer);
 
 		String[] str = { "B04", "BB", "55", "B5", "B1", "405" };
-		int[] bondper = { 100, 0, 0, 0, 0, 0 };
+		int[] bondper = { 50, 30, 20, 0, 0, 0 };
 
-		String[] mono = { "G", "H", "S" };
-		int[] monoPer = { 30, 30, 40 };
+		String[] mono = { "G", "S", "H" };
+		int[] monoPer = { 100, 0, 0 };
 		
 		GeneratePolymer gp = new GeneratePolymer();
 		List<String> polymentString = gp.getPossiblePolymer(str, bondper, mono, monoPer, dp,noOfPer);
@@ -30,7 +30,22 @@ public static void main(String[] args) {
 		{
 			System.out.println(polymentString.get(i));
 		}
+		
 }
+
+public List<String> getCorrectedPolymers(String[] str, int[] bondper, String[] mono, int[] monoPer, int dp, long noOfPer)
+{
+	List<String> polymerList = getPossiblePolymer (str, bondper, mono, monoPer, dp, noOfPer);	
+	
+	for(int i=0;i<polymerList.size();i++)
+	{
+		System.out.println(polymerList.get(i));
+	}
+			
+	return polymerList;
+}
+
+
 	
 /**
  * Method returns the possible polymer chain permutations (within the specified limit parameter)
@@ -143,23 +158,25 @@ public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mon
 	 * @param bondList  - List to store the possible combinations of Bond / Monomers
 	 * @param noOfPermutation
 	 */
-	public void permute(String[] str, int l, int r, List<String[]> bondList, long noOfPermutation) {
+	public static void permute(String[] str, int l, int r, List<String[]> bondList, long noOfPermutation) {
 		if (bondList.size() >= noOfPermutation) {
-			System.out.print("Enteret empty return");
+			//System.out.print("Enteret empty return");
 			return;
 		}
 
 		if (l == r) {
 			String[] st3 = str.clone(); // cloning the string array to add it to ArrayList
-			if (!bondList.contains(st3)) {
+			//if (!bondList.contains(st3)) {
 				bondList.add(st3);
-			}
+			//}
 		} else
 			for (int i = l; i <= r; i++) {
-
-				str = swap(str, l, i);
+				if (r%2 == 0)	
+					str = swap(str, i, l);
+				else
+					str = swap(str, l, i);
 				permute(str, l + 1, r, bondList, noOfPermutation); // Recursive call
-				str = swap(str, l, i);
+				str = swap(str, l, 0);
 			}
 
 	}
@@ -185,7 +202,7 @@ public List<String> getPossiblePolymer(String[] str, int[] bondper, String[] mon
 	 * @param j
 	 * @return
 	 */
-	public String[] swap(String[] a, int i, int j) {
+	public static String[] swap(String[] a, int i, int j) {
 		String temp;
 		temp = a[i];
 		a[i] = a[j];

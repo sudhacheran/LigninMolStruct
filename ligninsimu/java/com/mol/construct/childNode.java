@@ -32,9 +32,13 @@ public class childNode
 	}
 	@Override
 	public String toString() {
+		//return "['"+pType+"','"+ cType+"']";
 		return "childNode [pType=" + pType + ", cType=" + cType + ", bondType=" + bondType + "]";
 	}
 	
+	public String getData() {
+		return "["+pType+"-"+ bondType+"-"+ cType+"]";
+	}
 	
 	
 }

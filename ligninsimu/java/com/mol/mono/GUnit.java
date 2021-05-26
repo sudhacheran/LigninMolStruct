@@ -5,18 +5,31 @@ import java.util.ArrayList;
 
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
+import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomType;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
 
-public class SUnit extends MonolignolBase {
+public class GUnit extends MonolignolBase {
 	
 	IAtomContainer mol = null;
 	ArrayList<IAtom> bondingAtom = new ArrayList<IAtom>();
 	public static void main(String s[]) throws IOException
 	{
-		SUnit sunit = new SUnit(1);
-		sunit.toIMage(101, sunit.mol);		
+		MonolignolBase gunit = new GUnit(1);
+		
+		System.out.println(gunit.mol);
+		try {
+			gunit = updatedStruct(gunit);
+		} catch (CDKException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		gunit.toIMage("103", gunit.mol);	
+		//gunit.getSmile(gunit.mol);		
 	}
 	
 	
@@ -29,22 +42,19 @@ public class SUnit extends MonolignolBase {
 		this.mol = mol;
 	}
 
-	public SUnit(int i) {
+	public GUnit(int i) {
 		super();
 		mol = generateBaseMol(i);
-		IAtom o3,o4,c7,c8,c5 = null,c3 = null;
-		IBond b13,b14,b15,b16;
+		IAtom o3,c7,c5 = null,c3 = null;
+		IBond b13,b14;
 		
 		
 		c7 = new Atom(6);		 
 		c7.setAtomTypeName("c7_"+i);
-		c8 = new Atom(6);		 
-		c8.setAtomTypeName("c8_"+i);
 		
 		o3 = new Atom(8);
 		o3.setAtomTypeName("O3_"+i);
-		o4 = new Atom(8);
-		o4.setAtomTypeName("O4_"+i);
+		
 		
 		for (int i1=0;i1<mol.getAtomCount();i1++)
 		{
@@ -59,17 +69,11 @@ public class SUnit extends MonolignolBase {
 		}
 				
 		b13 = new Bond(c3, o3);
-		b14 = new Bond(c5, o4); 
-		b15 = new Bond(o3, c7);
-		b16 = new Bond(o4, c8); 
-		mol.addAtom(c7);
-		mol.addAtom(c8);
-		mol.addAtom(o3);
-		mol.addAtom(o4);
+		b14 = new Bond(o3, c7);
+		mol.addAtom(c7);		
+		mol.addAtom(o3);		
 		mol.addBond(b13);
 		mol.addBond(b14);
-		mol.addBond(b15);
-		mol.addBond(b16);
 		setBondingAtom(bondingAtom);
 		
 	}
@@ -86,5 +90,26 @@ public class SUnit extends MonolignolBase {
 		bondingAtom.add(alphaC);		
 		this.bondingAtom = bondingAtom;
 	}
+	
+	static MonolignolBase updatedStruct(MonolignolBase g) throws CDKException
+	{
+		IAtomContainer g1_mol = g.getMol();	
+		for (int i=0;i<g1_mol.getAtomCount();i++)
+		{			
+			g1_mol.getAtom(i).setAtomTypeName(g1_mol.getAtom(i).getSymbol());			
+		}		
+		//g.toIMage(10, g.getMol());
+	
+		CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(g1_mol.getBuilder());
+	    for (IAtom atom : g1_mol.atoms()) 
+	    {
+	     //System.out.println(atom);
+	     IAtomType type = matcher.findMatchingAtomType(g1_mol, atom);
+	     AtomTypeManipulator.configure(atom, type);
+	    }		
+		
+		return g;
+	}
+	
 
 }

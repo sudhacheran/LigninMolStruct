@@ -1,6 +1,7 @@
 package com.mol.mono;
 
 import java.awt.Color;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.openscience.cdk.Atom;
@@ -14,13 +15,18 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMolecularFormula;
+import org.openscience.cdk.io.CMLWriter;
 import org.openscience.cdk.io.XYZWriter;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
+import org.openscience.cdk.signature.MoleculeSignature;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator;
+import org.openscience.cdk.smiles.SmilesParser;
+
 
 public class MonolignolBase {
 	
@@ -142,8 +148,13 @@ public class MonolignolBase {
 			StructureDiagramGenerator sdg = new StructureDiagramGenerator();
 			sdg.generateCoordinates(mol);
 			IAtomContainer OutMol = sdg.getMolecule();
-			SmilesGenerator sg      = new SmilesGenerator(SmiFlavor.Absolute);
-			smi     = sg.create(OutMol);			
+			CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(OutMol.getBuilder());
+			adder.addImplicitHydrogens(OutMol);
+			SmilesGenerator sg      = new SmilesGenerator(SmiFlavor.Unique |SmiFlavor.UseAromaticSymbols | SmiFlavor.Canonical );
+			smi     = sg.create(OutMol);
+			
+			//System.out.print(smi);
+			
 		} catch (CDKException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -162,7 +173,22 @@ public class MonolignolBase {
 		return Math.round(molWeight);
 	}
 	
-	public void toIMage(int i, IAtomContainer mol)
+	@SuppressWarnings(value = { "" })
+	public void toCML(IAtomContainer mol, String nm) {
+		 
+	   try {
+			   FileWriter output = new FileWriter("cml/lg_"+ nm +".cml");
+			   CMLWriter cmlwriter = new CMLWriter(output);
+			   cmlwriter.write(mol);
+			   cmlwriter.close();
+		} catch (CDKException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		   
+	}
+	
+	public void toIMage(String nm, IAtomContainer mol)
 	 {
 		 try {	
 			StructureDiagramGenerator sdg = new StructureDiagramGenerator();
@@ -170,8 +196,11 @@ public class MonolignolBase {
 			
 			IAtomContainer OutMol = sdg.getMolecule();
 			
-			new DepictionGenerator().withAtomColors().depict(OutMol)
-			          .writeTo("struct/g"+i+".png");
+			CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(OutMol.getBuilder());
+			   adder.addImplicitHydrogens(OutMol);
+		
+			new DepictionGenerator().withAtomColors().depict(OutMol)   //.withAtomNumbers()
+			          .writeTo("struct/lg_"+nm+".png");
 		
 			
 		} catch (IOException | CDKException e) {
